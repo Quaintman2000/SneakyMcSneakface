@@ -6,6 +6,7 @@ using UnityEngine.Windows.Speech;
 
 public class Enemy : MonoBehaviour
 {
+    public float fieldOfView = 45;
     //keep track of our transform
     private Transform tf;
 
@@ -42,13 +43,14 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        CanHear(GameManager.instance.Player);
         if (AIState == "Idle")
         {
             //do the state behavior
             Idle();
 
             //check for transitions
-            if (isInRange())
+            if (IsInRange())
             {
                 ChangeState("Seek");
             }
@@ -73,7 +75,7 @@ public class Enemy : MonoBehaviour
                 ChangeState(("Rest"));
             }
 
-            if (!isInRange())
+            if (!IsInRange())
             {
                 ChangeState("Idle");
             }
@@ -109,8 +111,38 @@ public class Enemy : MonoBehaviour
         AIState = newState;
     }
 
-    public bool isInRange()
+    public bool IsInRange()
     {
         return (Vector3.Distance(tf.position, target.position) <= attackRange);
+    }
+    public bool CanHear(GameObject target)
+    {
+        //get noise maker from our target
+        NoiseMaker noise = target.GetComponent<NoiseMaker>();
+        //if there is a noise maker on our target, we can potentially hear our target
+        if (noise != null)
+        {
+            float adjustedVolumeDistance = noise.volumeDistance - Vector3.Distance(tf.position, target.transform.position);
+            //if we're close enough, we hear the noise
+            if (adjustedVolumeDistance > 0)
+            {
+                Debug.Log("I heard the noise!");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool CanSee(GameObject target)
+    {
+        Vector3 vectorToTarget = target.transform.position - tf.position;
+        //detect if target is inside FOV
+        float angleToTarget = Vector3.Angle(vectorToTarget, tf.up);
+        if (angleToTarget <= fieldOfView)
+        {
+            //detect if target is in line of sight
+        }
+
+        return false;
     }
 }
