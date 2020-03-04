@@ -141,8 +141,11 @@ public class Enemy : MonoBehaviour
         if (angleToTarget <= fieldOfView)
         {
             //detect if target is in line of sight
+            return true;
         }
-
-        return false;
+        else
+        {
+            return false;
+        }
     }
 }
