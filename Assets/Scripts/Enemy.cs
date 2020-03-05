@@ -141,6 +141,7 @@ public class Enemy : MonoBehaviour
         if (angleToTarget <= fieldOfView)
         {
             //detect if target is in line of sight
+            RaycastHit2D hitinfo = Physics2D.Raycast(tf.position, target.transform.position - tf.position);
             return true;
         }
         else
